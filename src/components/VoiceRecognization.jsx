@@ -5,9 +5,9 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 
 import { useChat } from "../hooks/useChat";
-function VoiceRecognition({ isListening, setCaptionData }) {
-  const [segments, setSegments] = useState([]);
-  const { fetchAudio } = useChat();
+function VoiceRecognition({ isListening }) {
+  // const [segments, setSegments] = useState([]);
+  const { fetchAudio, audioPlaying, setaudioPlaying } = useChat();
   // const [isListening, setIsListening] = useState(false);
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
@@ -18,24 +18,42 @@ function VoiceRecognition({ isListening, setCaptionData }) {
     return null;
   }
   useEffect(() => {
-    if (isListening) {
+    console.log(audioPlaying);
+    if (isListening && !audioPlaying) {
       SpeechRecognition.startListening({ continuous: true, language: "en-IN" });
-    } else {
-      SpeechRecognition.stopListening();
-      finalizeSegment();
     }
-  }, [isListening]);
+    //  else {
+    //   SpeechRecognition.stopListening();
+    //   finalizeSegment();
+    // }
+    return () => {
+      SpeechRecognition.stopListening();
+      clearTimeout(silenceTimer);
+    };
+  }, [isListening, audioPlaying]);
+
+  //
   const finalizeSegment = () => {
     if (transcript) {
-      setCaptionData(transcript);
-      // Add the segment to local state
-      setSegments((prevSegments) => [...prevSegments, transcript]);
+      // setCaptionData(transcript);
+      // // Add the segment to local state
+      // setSegments((prevSegments) => [...prevSegments, transcript]);
 
       // Reset the transcript for the next segment
-      resetTranscript();
+      // resetTranscript();
 
       // Call the fetchAudio function passed from the parent
+      SpeechRecognition.stopListening();
+      setaudioPlaying(true);
       fetchAudio(transcript);
+      // fetchAudio(transcript).then(() => {
+      //   setaudioPlaying(false); // Reset audio playing state after fetching
+      //   SpeechRecognition.startListening({
+      //     continuous: true,
+      //     language: "en-IN",
+      //   }); // Start listening again
+      // });
+      resetTranscript();
     }
   };
 

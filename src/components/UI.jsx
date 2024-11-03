@@ -6,7 +6,14 @@ import "regenerator-runtime/runtime"; // Import regenerator-runtime globally
 import VoiceRecognition from "./VoiceRecognization";
 export const UI = ({ hidden, ...props }) => {
   const input = useRef();
-  const { chat, loading, cameraZoomed, setCameraZoomed, message } = useChat();
+  const {
+    chat,
+    loading,
+    cameraZoomed,
+    setCameraZoomed,
+    message,
+    audioPlaying,
+  } = useChat();
 
   const sendMessage = () => {
     // console.log("message");
@@ -26,9 +33,15 @@ export const UI = ({ hidden, ...props }) => {
   const [isListening, setIsListening] = useState(false);
 
   const toggleListening = () => {
+    // if (audioPlaying) {
+    //   // If audio is currently playing, do not change microphone state
+    //   return;
+    // }
+
     setIsListening((prevState) => !prevState); // Toggle the listening state
   };
-  const [captionData, setCaptionData] = useState();
+
+  // mic load
   return (
     <>
       <div className="fixed top-0 left-0 right-0 bottom-0 z-10 flex justify-between p-4 flex-col pointer-events-none">
@@ -101,18 +114,16 @@ export const UI = ({ hidden, ...props }) => {
             {/* <div className="text-center bg-white max-w-[350px] mb-3  rounded-md mr-[460px] max-h-[40px] line-clamp-1">
               {captionData}
             </div> */}
-            <VoiceRecognition
-              isListening={isListening}
-              setCaptionData={setCaptionData}
-            />
+            <VoiceRecognition isListening={isListening} />
           </div>
           <div className="w-full absolute left-[340px]"></div>
           <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
             <button
               className={`flex justify-center items-center rounded-full p-2 h-[60px] ${
-                isListening ? "bg-red-500" : "bg-gray-500"
+                audioPlaying ? "bg-gray-500" : "bg-yellow-500"
               }`}
               onClick={toggleListening}
+              // disabled={audioPlaying}
             >
               <FaMicrophone className="text-xl" />
 

@@ -110,7 +110,7 @@ export function Avatar(props) {
     "/models/64f1a714fe61576b46f27ca2.glb"
   );
 
-  const { message, fetchAudio, onMessagePlayed } = useChat();
+  const { message, fetchAudio, onMessagePlayed, setaudioPlaying } = useChat();
 
   const [lipsync, setLipsync] = useState();
   // const audioRef = useRef(new Audio(audio));
@@ -143,21 +143,40 @@ export function Avatar(props) {
   //     audioRef.current.currentTime = 0; // Reset time
   //   };
   // }, [message]);
+  const audioRef = useRef(null); // Ref for the audio element
+
   useEffect(() => {
-    console.log(message);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset time
+    }
+
     if (!message) {
       setAnimation("Idle");
       return;
     }
+
     setAnimation(message.animation);
-    // setFacialExpression(message.facialExpression);
-    setFacialExpression("smile");
+    setFacialExpression(message.facialExpression); // Use the facial expression from the message
     setLipsync(message.lipsync);
-    const audio = new Audio(message.audio);
-    audio.play();
-    setAudio(audio);
-    audio.onended = onMessagePlayed;
-  }, [message]);
+
+    audioRef.current = new Audio(message.audio);
+    // setaudioPlaying(true); // Set audio playing to true
+    audioRef.current.play();
+
+    audioRef.current.onended = () => {
+      setaudioPlaying(false); // Reset audio playing state
+      onMessagePlayed(); // Call the function when audio ends
+      setAnimation("Idle"); // Go back to idle when audio ends
+    };
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0; // Reset time on cleanup
+      }
+    };
+  }, [message, setaudioPlaying, onMessagePlayed]);
   const { animations } = useGLTF("/models/animations.glb");
   console.log(animations);
 
@@ -206,10 +225,6 @@ export function Avatar(props) {
   const [winkRight, setWinkRight] = useState(false);
   const [facialExpression, setFacialExpression] = useState("");
   const [audio, setAudio] = useState();
-  // useEffect(() => {
-  //   console.log("audio");
-  //   audio.play();
-  // }, [audio]);
   useFrame(() => {
     !setupMode &&
       Object.keys(nodes.EyeLeft.morphTargetDictionary).forEach((key) => {
@@ -235,7 +250,7 @@ export function Avatar(props) {
     const appliedMorphTargets = [];
     if (message && lipsync) {
       const currentAudioTime = audio.currentTime;
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < lipsync.mouthCues.length; i++) {
         const mouthCue = lipsync.mouthCues[i];
         if (
           currentAudioTime >= mouthCue.start &&
@@ -257,7 +272,7 @@ export function Avatar(props) {
   });
 
   useControls("FacialExpressions", {
-    chat: button(() => fetchAudio()),
+    // chat: button(() => fetchAudio()),
     winkLeft: button(() => {
       setWinkLeft(true);
       setTimeout(() => setWinkLeft(false), 300);
