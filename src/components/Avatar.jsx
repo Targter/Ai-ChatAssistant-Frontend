@@ -103,7 +103,6 @@ const corresponding = {
   H: "viseme_TH",
   X: "viseme_PP",
 };
-
 let setupMode = false;
 
 export function Avatar(props) {
@@ -111,10 +110,39 @@ export function Avatar(props) {
     "/models/64f1a714fe61576b46f27ca2.glb"
   );
 
-  const { message, onMessagePlayed, chat } = useChat();
+  const { message, fetchAudio, onMessagePlayed } = useChat();
 
   const [lipsync, setLipsync] = useState();
+  // const audioRef = useRef(new Audio(audio));
+  // useEffect(() => {
+  //   console.log(message);
+  //   if (!message) {
+  //     setAnimation("Idle");
+  //     return;
+  //   }
+  //   setAnimation(message.animation);
+  //   setFacialExpression(message.facialExpression);
+  //   setLipsync(message.lipsync);
 
+  //   // Play the audio
+  //   audioRef.current.play();
+
+  //   // Trigger talking animation when audio starts
+  //   audioRef.current.onplay = () => {
+  //     setAnimation("Talking"); // Change this to your talking animation name
+  //   };
+
+  //   audioRef.current.onended = () => {
+  //     onMessagePlayed();
+  //     setAnimation("Idle"); // Go back to idle when audio ends
+  //   };
+
+  //   // Clean up the audio element
+  //   return () => {
+  //     audioRef.current.pause();
+  //     audioRef.current.currentTime = 0; // Reset time
+  //   };
+  // }, [message]);
   useEffect(() => {
     console.log(message);
     if (!message) {
@@ -122,20 +150,21 @@ export function Avatar(props) {
       return;
     }
     setAnimation(message.animation);
-    setFacialExpression(message.facialExpression);
+    // setFacialExpression(message.facialExpression);
+    setFacialExpression("smile");
     setLipsync(message.lipsync);
-    const audio = new Audio("data:audio/mp3;base64," + message.audio);
+    const audio = new Audio(message.audio);
     audio.play();
     setAudio(audio);
     audio.onended = onMessagePlayed;
   }, [message]);
-
   const { animations } = useGLTF("/models/animations.glb");
+  console.log(animations);
 
   const group = useRef();
   const { actions, mixer } = useAnimations(animations, group);
   const [animation, setAnimation] = useState(
-    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
+    animations.find((a) => a.name === "Talking_2") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
   );
   useEffect(() => {
     actions[animation]
@@ -177,7 +206,10 @@ export function Avatar(props) {
   const [winkRight, setWinkRight] = useState(false);
   const [facialExpression, setFacialExpression] = useState("");
   const [audio, setAudio] = useState();
-
+  // useEffect(() => {
+  //   console.log("audio");
+  //   audio.play();
+  // }, [audio]);
   useFrame(() => {
     !setupMode &&
       Object.keys(nodes.EyeLeft.morphTargetDictionary).forEach((key) => {
@@ -203,7 +235,7 @@ export function Avatar(props) {
     const appliedMorphTargets = [];
     if (message && lipsync) {
       const currentAudioTime = audio.currentTime;
-      for (let i = 0; i < lipsync.mouthCues.length; i++) {
+      for (let i = 0; i < 30; i++) {
         const mouthCue = lipsync.mouthCues[i];
         if (
           currentAudioTime >= mouthCue.start &&
@@ -225,7 +257,7 @@ export function Avatar(props) {
   });
 
   useControls("FacialExpressions", {
-    chat: button(() => chat()),
+    chat: button(() => fetchAudio()),
     winkLeft: button(() => {
       setWinkLeft(true);
       setTimeout(() => setWinkLeft(false), 300);

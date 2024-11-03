@@ -1,11 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { FaMicrophone } from "react-icons/fa";
 import { useChat } from "../hooks/useChat";
 
+import "regenerator-runtime/runtime"; // Import regenerator-runtime globally
+import VoiceRecognition from "./VoiceRecognization";
 export const UI = ({ hidden, ...props }) => {
   const input = useRef();
   const { chat, loading, cameraZoomed, setCameraZoomed, message } = useChat();
 
   const sendMessage = () => {
+    // console.log("message");
     const text = input.current.value;
     if (!loading && !message) {
       chat(text);
@@ -15,14 +19,20 @@ export const UI = ({ hidden, ...props }) => {
   if (hidden) {
     return null;
   }
+  const sendmessage = () => {
+    console.log("this called");
+  };
 
+  const [isListening, setIsListening] = useState(false);
+
+  const toggleListening = () => {
+    setIsListening((prevState) => !prevState); // Toggle the listening state
+  };
+  const [captionData, setCaptionData] = useState();
   return (
     <>
       <div className="fixed top-0 left-0 right-0 bottom-0 z-10 flex justify-between p-4 flex-col pointer-events-none">
-        {/* <div className="self-start backdrop-blur-md bg-white bg-opacity-50 p-4 rounded-lg">
-          <h1 className="font-black text-xl">My Virtual GF</h1>
-          <p>I will always love you ❤️</p>
-        </div> */}
+        {/* <div className="pointer-events-auto"> </div> */}
         <div className="w-full flex flex-col items-end justify-center gap-4">
           <button
             onClick={() => setCameraZoomed(!cameraZoomed)}
@@ -86,26 +96,53 @@ export const UI = ({ hidden, ...props }) => {
             </svg>
           </button>
         </div>
-        <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
-          <input
-            className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
-            placeholder="Type a message..."
-            ref={input}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage();
-              }
-            }}
-          />
-          <button
-            disabled={loading || message}
-            onClick={sendMessage}
-            className={`bg-gray-500 hover:bg-gray-600 text-white p-4 px-10 font-semibold uppercase rounded-md ${
-              loading || message ? "cursor-not-allowed opacity-30" : ""
-            }`}
-          >
-            Send
-          </button>
+        <div>
+          <div className="flex w-full justify-center">
+            {/* <div className="text-center bg-white max-w-[350px] mb-3  rounded-md mr-[460px] max-h-[40px] line-clamp-1">
+              {captionData}
+            </div> */}
+            <VoiceRecognition
+              isListening={isListening}
+              setCaptionData={setCaptionData}
+            />
+          </div>
+          <div className="w-full absolute left-[340px]"></div>
+          <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
+            <button
+              className={`flex justify-center items-center rounded-full p-2 h-[60px] ${
+                isListening ? "bg-red-500" : "bg-gray-500"
+              }`}
+              onClick={toggleListening}
+            >
+              <FaMicrophone className="text-xl" />
+
+              {/* Replace with your logo or icon */}
+              {/* <img 
+          src="path/to/your/logo.png"
+          alt="Voice Recognition"
+          className="w-8 h-8"
+        /> */}
+            </button>
+            <input
+              className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
+              placeholder="Type a message..."
+              ref={input}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  sendMessage();
+                }
+              }}
+            />
+            <button
+              disabled={loading || message}
+              onClick={sendMessage}
+              className={`bg-gray-500 hover:bg-gray-600 text-white p-4 px-10 font-semibold uppercase rounded-md ${
+                loading || message ? "cursor-not-allowed opacity-30" : ""
+              }`}
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </>

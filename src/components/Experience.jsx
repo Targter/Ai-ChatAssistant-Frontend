@@ -11,6 +11,7 @@ import { Avatar } from "./Avatar";
 const Dots = (props) => {
   const { loading } = useChat();
   const [loadingText, setLoadingText] = useState("");
+
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
@@ -37,7 +38,7 @@ const Dots = (props) => {
   );
 };
 
-export const Experience = () => {
+export const Experience = ({ audio }) => {
   const cameraControls = useRef();
   const { cameraZoomed } = useChat();
 

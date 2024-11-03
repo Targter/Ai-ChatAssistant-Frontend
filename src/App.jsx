@@ -3,8 +3,13 @@ import { Canvas } from "@react-three/fiber";
 import { Leva } from "leva";
 import { Experience } from "./components/Experience";
 import { UI } from "./components/UI";
+import { useState } from "react";
 
 function App() {
+  // fetchAudio
+  // const [audio, setAudio] = useState(null); // Declare state for audio
+
+  //
   return (
     <>
       <Loader />
