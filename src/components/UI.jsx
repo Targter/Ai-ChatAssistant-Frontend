@@ -120,7 +120,7 @@ export const UI = ({ hidden, ...props }) => {
           <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
             <button
               className={`flex justify-center items-center rounded-full p-2 h-[60px] ${
-                audioPlaying ? "bg-gray-500" : "bg-yellow-500"
+                audioPlaying ? "bg-red-500" : "bg-gray-500"
               }`}
               onClick={toggleListening}
               // disabled={audioPlaying}
