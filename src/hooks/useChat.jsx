@@ -40,24 +40,25 @@ export const ChatProvider = ({ children }) => {
         const audioUrl = URL.createObjectURL(audioBlob);
         console.log(response);
         // Define manually-provided properties for the message
+        const audio = new Audio(audioUrl);
         const message = {
           text: "this is my data", // Text from the input
-          audio: audioUrl, // Audio URL from the fetched blob
+          // audio: audioUrl, // Audio URL from the fetched blob
           lipsync: {
             mouthCues: [
               { value: "A", start: 0.0, end: 0.3 },
               { value: "B", start: 0.4, end: 0.6 },
               { value: "C", start: 0.7, end: 1.0 },
               { value: "D", start: 1.1, end: 1.4 },
-              { value: "E", start: 1.5, end: 1.8 },
             ],
           }, // Use default or empty lipsync data if not available
-          facialExpression: "smile", // Set a default expression or based on context
-          animation: "Idle", // Set the animation state for this message
+          facialExpression: "Crying", // Set a default expression or based on context
+          animation: "sad", // Set the animation state for this message
         };
 
+        audio.play();
         // Update messages array with the new message object
-        setMessages((prevMessages) => [...prevMessages, message]);
+        // setMessages((prevMessages) => [...prevMessages, message]);
         setLoading(false);
         console.log("Audio URL fetched and message added");
       } else {
@@ -75,7 +76,8 @@ export const ChatProvider = ({ children }) => {
   const [message, setMessage] = useState();
   const [loading, setLoading] = useState(false);
   const [cameraZoomed, setCameraZoomed] = useState(true);
-  const [audioPlaying, setaudioPlaying] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control audio playback
+
   const onMessagePlayed = () => {
     setMessages((messages) => messages.slice(1));
   };
@@ -88,67 +90,6 @@ export const ChatProvider = ({ children }) => {
     }
   }, [messages]);
 
-  //
-  // const playAudio = () => {
-  //   // const newAudio = new Audio(audioUrl);
-  //   newAudio.onloadedmetadata = () => {
-  //     setAudioDuration(url.duration); // Set audio duration
-  //   };
-  //   newAudio
-  //     .play()
-  //     .then(() => setAudio(newAudio)) // Store the current audio instance after playing starts
-  //     .catch((error) => console.error("Error playing audio:", error));
-
-  //   newAudio.onended = () => onAudioEnded();
-  // };
-
-  // // Handle when audio ends
-  // const onAudioEnded = () => {
-  //   setMessages((prevMessages) => prevMessages.slice(1)); // Remove the played audio from the queue
-  //   setAudio(null); // Reset audio state after playing
-  //   setAudioDuration(0); // Reset duration after playing
-
-  //   // Play the next audio in the queue, if available
-  //   if (messages.length > 1) {
-  //     playAudio(messages[1]); // Play the next audio
-  //   }
-  // };
-
-  // // Monitor the messages queue and play the next audio if none is currently playing
-  // useEffect(() => {
-  //   if (messages.length > 0 && !audio) {
-  //     playAudio(messages[0]); // Play the first audio in the queue
-  //   }
-  // }, [messages, audio]);
-
-  //
-  // const playAudio = (audioUrl) => {
-  //   const newAudio = new Audio(audioUrl);
-  //   newAudio.onloadedmetadata = () => {
-  //     setAudioDuration(newAudio.duration); // Set audio duration
-  //     newAudio
-  //       .play()
-  //       .catch((error) => console.error("Error playing audio:", error));
-  //   };
-  //   newAudio.onended = () => onAudioEnded();
-  //   setAudio(newAudio); // Store the current audio instance
-  // };
-
-  // const onAudioEnded = () => {
-  //   setMessages((prevMessages) => prevMessages.slice(1)); // Remove the audio that just played
-  //   setAudio(null); // Reset audio state after playing the message
-  //   setAudioDuration(0); // Reset audio duration after playing
-  //   if (messages.length > 1) {
-  //     playAudio(messages[1]); // Play the next audio in the queue, if available
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (messages.length > 0 && !audio) {
-  //     playAudio(messages[0]); // Play the first audio when it is added
-  //   }
-  // }, [messages, audio]);
-
   return (
     <ChatContext.Provider
       value={{
@@ -159,8 +100,8 @@ export const ChatProvider = ({ children }) => {
         loading,
         cameraZoomed,
         setCameraZoomed,
-        setaudioPlaying,
-        audioPlaying,
+        setIsAudioPlaying,
+        isAudioPlaying,
       }}
     >
       {children}

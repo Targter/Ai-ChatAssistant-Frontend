@@ -113,70 +113,20 @@ export function Avatar(props) {
   const { message, fetchAudio, onMessagePlayed, setaudioPlaying } = useChat();
 
   const [lipsync, setLipsync] = useState();
-  // const audioRef = useRef(new Audio(audio));
-  // useEffect(() => {
-  //   console.log(message);
-  //   if (!message) {
-  //     setAnimation("Idle");
-  //     return;
-  //   }
-  //   setAnimation(message.animation);
-  //   setFacialExpression(message.facialExpression);
-  //   setLipsync(message.lipsync);
-
-  //   // Play the audio
-  //   audioRef.current.play();
-
-  //   // Trigger talking animation when audio starts
-  //   audioRef.current.onplay = () => {
-  //     setAnimation("Talking"); // Change this to your talking animation name
-  //   };
-
-  //   audioRef.current.onended = () => {
-  //     onMessagePlayed();
-  //     setAnimation("Idle"); // Go back to idle when audio ends
-  //   };
-
-  //   // Clean up the audio element
-  //   return () => {
-  //     audioRef.current.pause();
-  //     audioRef.current.currentTime = 0; // Reset time
-  //   };
-  // }, [message]);
-  const audioRef = useRef(null); // Ref for the audio element
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset time
-    }
-
+    console.log(message);
     if (!message) {
       setAnimation("Idle");
       return;
     }
-
     setAnimation(message.animation);
-    setFacialExpression(message.facialExpression); // Use the facial expression from the message
+    setFacialExpression(message.facialExpression);
     setLipsync(message.lipsync);
+    // console.log("meessaegt:", message);
+  }, [message]);
 
-    audioRef.current = new Audio(message.audio);
-    // setaudioPlaying(true); // Set audio playing to true
-    audioRef.current.play();
-
-    audioRef.current.onended = () => {
-      setaudioPlaying(false); // Reset audio playing state
-      onMessagePlayed(); // Call the function when audio ends
-      setAnimation("Idle"); // Go back to idle when audio ends
-    };
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0; // Reset time on cleanup
-      }
-    };
-  }, [message, setaudioPlaying, onMessagePlayed]);
+  //
   const { animations } = useGLTF("/models/animations.glb");
   console.log(animations);
 
@@ -270,7 +220,6 @@ export function Avatar(props) {
       lerpMorphTarget(value, 0, 0.1);
     });
   });
-
   useControls("FacialExpressions", {
     // chat: button(() => fetchAudio()),
     winkLeft: button(() => {

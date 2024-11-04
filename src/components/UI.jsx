@@ -5,43 +5,40 @@ import { useChat } from "../hooks/useChat";
 import "regenerator-runtime/runtime"; // Import regenerator-runtime globally
 import VoiceRecognition from "./VoiceRecognization";
 export const UI = ({ hidden, ...props }) => {
+  const [inputValue, setInputValue] = useState("");
   const input = useRef();
   const {
-    chat,
     loading,
     cameraZoomed,
     setCameraZoomed,
     message,
     audioPlaying,
+    fetchAudio,
+    micListening,
   } = useChat();
 
   const sendMessage = () => {
-    // console.log("message");
-    const text = input.current.value;
-    if (!loading && !message) {
-      chat(text);
-      input.current.value = "";
+    const text = input.current?.value; // Safely access input value
+    if (input.current) {
+      setInputValue(text);
+      input.current.value = ""; // Clear the input value
+      input.current.placeholder = "";
+      if (text && text.trim() !== "") {
+        console.log("call.........");
+
+        fetchAudio(text);
+      }
     }
   };
   if (hidden) {
     return null;
   }
-  const sendmessage = () => {
-    console.log("this called");
-  };
 
   const [isListening, setIsListening] = useState(false);
-
   const toggleListening = () => {
-    // if (audioPlaying) {
-    //   // If audio is currently playing, do not change microphone state
-    //   return;
-    // }
-
     setIsListening((prevState) => !prevState); // Toggle the listening state
   };
 
-  // mic load
   return (
     <>
       <div className="fixed top-0 left-0 right-0 bottom-0 z-10 flex justify-between p-4 flex-col pointer-events-none">
@@ -114,7 +111,10 @@ export const UI = ({ hidden, ...props }) => {
             {/* <div className="text-center bg-white max-w-[350px] mb-3  rounded-md mr-[460px] max-h-[40px] line-clamp-1">
               {captionData}
             </div> */}
-            <VoiceRecognition isListening={isListening} />
+            <VoiceRecognition
+              isListening={isListening}
+              inputdata={inputValue}
+            />
           </div>
           <div className="w-full absolute left-[340px]"></div>
           <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
@@ -134,6 +134,7 @@ export const UI = ({ hidden, ...props }) => {
           className="w-8 h-8"
         /> */}
             </button>
+
             <input
               className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
               placeholder="Type a message..."

@@ -4,7 +4,7 @@ import { Leva } from "leva";
 import { Experience } from "./components/Experience";
 import { UI } from "./components/UI";
 import { useState } from "react";
-
+import Scraper from "./components/webScrap";
 function App() {
   // fetchAudio
   // const [audio, setAudio] = useState(null); // Declare state for audio
@@ -12,6 +12,7 @@ function App() {
   //
   return (
     <>
+      {/* <Scraper /> */}
       <Loader />
       <Leva hidden />
       <UI />
