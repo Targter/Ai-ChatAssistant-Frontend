@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
+import { mouthCues } from "../../public/mouth_cues";
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
@@ -25,8 +25,9 @@ export const ChatProvider = ({ children }) => {
 
   const fetchAudio = async (text) => {
     try {
-      console.log("nto called");
-      console.log(text);
+      // console.log("nto called");
+      // console.log(text);
+      //
       setLoading(true);
       const response = await fetch(
         `https://ttserver-psi.vercel.app/stream/${encodeURIComponent(text)}`,
@@ -34,32 +35,43 @@ export const ChatProvider = ({ children }) => {
           method: "GET",
         }
       );
-
+      // const audio = new Audio("public/oa.wav");
+      // // Define manually-provided properties for the message
+      // // const audio = new Audio("public/oa.wav");
+      // const message = {
+      //   text: "this is my data", // Text from the input
+      //   audio: audio, // Audio URL from the fetched blob
+      //   lipsync: {
+      //     mouthCues,
+      //   }, // Use default or empty lipsync data if not available
+      //   facialExpression: "smile",
+      //   animation: "Idle",
+      // };
+      // audio.play();
+      // // Update messages array with the new message object
+      // // setMessages((prevMessages) => [...prevMessages, message]);
+      // setLoading(false);
+      // setMessage(message);
       if (response.ok) {
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
-        console.log(response);
+        // console.log(response);
         // Define manually-provided properties for the message
         const audio = new Audio(audioUrl);
         const message = {
           text: "this is my data", // Text from the input
-          // audio: audioUrl, // Audio URL from the fetched blob
+          audio: audio, // Audio URL from the fetched blob
           lipsync: {
-            mouthCues: [
-              { value: "A", start: 0.0, end: 0.3 },
-              { value: "B", start: 0.4, end: 0.6 },
-              { value: "C", start: 0.7, end: 1.0 },
-              { value: "D", start: 1.1, end: 1.4 },
-            ],
+            mouthCues,
           }, // Use default or empty lipsync data if not available
-          facialExpression: "Crying", // Set a default expression or based on context
-          animation: "sad", // Set the animation state for this message
+          facialExpression: "smile",
+          animation: "Idle",
         };
-
         audio.play();
         // Update messages array with the new message object
         // setMessages((prevMessages) => [...prevMessages, message]);
         setLoading(false);
+        setMessage(message);
         console.log("Audio URL fetched and message added");
       } else {
         console.error("Failed to fetch audio:", response.statusText);
@@ -89,6 +101,48 @@ export const ChatProvider = ({ children }) => {
       setMessage(null);
     }
   }, [messages]);
+
+  // This function should be defined to update the model’s mouth shape
+  // Define this function to update the model’s mouth shape
+  // const updateMouthShape = (shape) => {
+  //   // Implement your Three.js logic here to set the mouth shape
+  //   // Example: setting the mouth shape to "closed" or "neutral"
+  //   console.log("Setting mouth shape to:", shape);
+  // };
+
+  // // Lip-sync effect
+  // useEffect(() => {
+  //   if (message?.audio && message?.lipsync) {
+  //     const audio = message.audio;
+  //     audio.play();
+
+  //     const syncMouth = () => {
+  //       const currentTime = audio.currentTime;
+  //       const currentCue = message.lipsync.mouthCues.find(
+  //         (cue) => currentTime >= cue.start && currentTime <= cue.end
+  //       );
+
+  //       if (currentCue) {
+  //         updateMouthShape(currentCue.value); // Set mouth shape based on cue
+  //       }
+
+  //       if (!audio.ended) {
+  //         requestAnimationFrame(syncMouth); // Continue animation if audio not ended
+  //       } else {
+  //         updateMouthShape("neutral"); // Reset to neutral shape when audio ends
+  //       }
+  //     };
+
+  //     // Start the lip-sync
+  //     requestAnimationFrame(syncMouth);
+
+  //     audio.addEventListener("ended", onMessagePlayed);
+
+  //     return () => {
+  //       audio.removeEventListener("ended", onMessagePlayed);
+  //     };
+  //   }
+  // }, [message]);
 
   return (
     <ChatContext.Provider

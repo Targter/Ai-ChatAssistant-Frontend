@@ -103,6 +103,7 @@ const corresponding = {
   H: "viseme_TH",
   X: "viseme_PP",
 };
+
 let setupMode = false;
 
 export function Avatar(props) {
@@ -110,7 +111,7 @@ export function Avatar(props) {
     "/models/64f1a714fe61576b46f27ca2.glb"
   );
 
-  const { message, fetchAudio, onMessagePlayed, setaudioPlaying } = useChat();
+  const { message, onMessagePlayed, chat } = useChat();
 
   const [lipsync, setLipsync] = useState();
 
@@ -120,20 +121,23 @@ export function Avatar(props) {
       setAnimation("Idle");
       return;
     }
+    console.log(message);
     setAnimation(message.animation);
     setFacialExpression(message.facialExpression);
     setLipsync(message.lipsync);
-    // console.log("meessaegt:", message);
+    const audio = message.audio;
+    // const audio = new Audio(message.audio);
+    audio.play();
+    setAudio(audio);
+    audio.onended = onMessagePlayed;
   }, [message]);
 
-  //
   const { animations } = useGLTF("/models/animations.glb");
-  console.log(animations);
 
   const group = useRef();
   const { actions, mixer } = useAnimations(animations, group);
   const [animation, setAnimation] = useState(
-    animations.find((a) => a.name === "Talking_2") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
+    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
   );
   useEffect(() => {
     actions[animation]
@@ -175,6 +179,7 @@ export function Avatar(props) {
   const [winkRight, setWinkRight] = useState(false);
   const [facialExpression, setFacialExpression] = useState("");
   const [audio, setAudio] = useState();
+
   useFrame(() => {
     !setupMode &&
       Object.keys(nodes.EyeLeft.morphTargetDictionary).forEach((key) => {
@@ -220,8 +225,9 @@ export function Avatar(props) {
       lerpMorphTarget(value, 0, 0.1);
     });
   });
+
   useControls("FacialExpressions", {
-    // chat: button(() => fetchAudio()),
+    chat: button(() => chat()),
     winkLeft: button(() => {
       setWinkLeft(true);
       setTimeout(() => setWinkLeft(false), 300);

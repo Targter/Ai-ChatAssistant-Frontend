@@ -14,7 +14,6 @@ export const UI = ({ hidden, ...props }) => {
     message,
     audioPlaying,
     fetchAudio,
-    micListening,
   } = useChat();
 
   const sendMessage = () => {
@@ -24,8 +23,7 @@ export const UI = ({ hidden, ...props }) => {
       input.current.value = ""; // Clear the input value
       input.current.placeholder = "";
       if (text && text.trim() !== "") {
-        console.log("call.........");
-
+        console.log("call input");
         fetchAudio(text);
       }
     }
@@ -41,9 +39,12 @@ export const UI = ({ hidden, ...props }) => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 bottom-0 z-10 flex justify-between p-4 flex-col pointer-events-none">
+      <div className="fixed top-0 left-0 right-0 bottom-0 z-10  flex justify-between p-4 flex-col pointer-events-none ">
+        <div className="w-full flex h-[70px] fixed p-2 top-0 left-0 bg-[#000000ba]">
+          <div className="bgimage h-full w-full ml-3"></div>
+        </div>
         {/* <div className="pointer-events-auto"> </div> */}
-        <div className="w-full flex flex-col items-end justify-center gap-4">
+        <div className="w-full flex flex-col items-end justify-center gap-4 mt-[100px] ">
           <button
             onClick={() => setCameraZoomed(!cameraZoomed)}
             className="pointer-events-auto bg-gray-500 hover:bg-gray-600 text-white p-4 rounded-md"
@@ -108,9 +109,6 @@ export const UI = ({ hidden, ...props }) => {
         </div>
         <div>
           <div className="flex w-full justify-center">
-            {/* <div className="text-center bg-white max-w-[350px] mb-3  rounded-md mr-[460px] max-h-[40px] line-clamp-1">
-              {captionData}
-            </div> */}
             <VoiceRecognition
               isListening={isListening}
               inputdata={inputValue}
@@ -126,13 +124,6 @@ export const UI = ({ hidden, ...props }) => {
               // disabled={audioPlaying}
             >
               <FaMicrophone className="text-xl" />
-
-              {/* Replace with your logo or icon */}
-              {/* <img 
-          src="path/to/your/logo.png"
-          alt="Voice Recognition"
-          className="w-8 h-8"
-        /> */}
             </button>
 
             <input

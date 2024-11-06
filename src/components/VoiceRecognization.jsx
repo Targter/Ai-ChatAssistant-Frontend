@@ -8,7 +8,7 @@ import { useChat } from "../hooks/useChat";
 function VoiceRecognition({ isListening, inputdata }) {
   // const [isAudioPlaying, setIsAudioPlaying] = useState(false); // State to control audio playback
 
-  const { fetchAudio, isAudioPlaying, setIsAudioPlaying } = useChat();
+  const { fetchAudio } = useChat();
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
   let silenceTimer = null;
@@ -19,6 +19,7 @@ function VoiceRecognition({ isListening, inputdata }) {
   useEffect(() => {
     if (isListening) {
       SpeechRecognition.startListening({ continuous: true, language: "en-IN" });
+      // console.log("listening.script...");
     } else {
       SpeechRecognition.stopListening();
       finalizeSegment();
@@ -27,19 +28,20 @@ function VoiceRecognition({ isListening, inputdata }) {
   const finalizeSegment = () => {
     if (transcript) {
       resetTranscript();
+      console.log("transcript.script...");
       fetchAudio(transcript);
     }
   };
 
-  useEffect(() => {
-    if (transcript) {
-      if (silenceTimer) clearTimeout(silenceTimer);
-      silenceTimer = setTimeout(() => {
-        finalizeSegment(); // Finalize the segment after 1 sec of silence
-      }, 1000);
-    }
-    return () => clearTimeout(silenceTimer);
-  }, [transcript]);
+  // useEffect(() => {
+  //   if (transcript) {
+  //     if (silenceTimer) clearTimeout(silenceTimer);
+  //     silenceTimer = setTimeout(() => {
+  //       finalizeSegment(); // Finalize the segment after 1 sec of silence
+  //     }, 1000);
+  //   }
+  //   return () => clearTimeout(silenceTimer);
+  // }, [transcript]);
 
   return (
     <div>

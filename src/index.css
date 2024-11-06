@@ -15,11 +15,29 @@
 body {
   margin: 0;
   /* background-color: #faaca8; */
-  background-color: black;
-  background-image: linear-gradient(19deg, #000000 0%, #ddd6f3 100%);
+  /* background-color: blue; */
+  /* background-image: linear-gradient(19deg, #000000 0%, #ddd6f3 100%); */
+  background-image: url("https://mr-pl.com/wp-content/uploads/2024/10/illustration-construction-site-scaled.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 body.greenScreen {
   background-color: #00ff00;
   background-image: none;
+}
+
+.bgimage {
+  /* background: red; */
+  background-image: url("https://mr-pl.com/wp-content/uploads/2024/09/monterra-white-png.png");
+  background-repeat: no-repeat;
+  background-size: 150px 60px;
+
+  /* background-color: #000000ba; */
+  /* margin-left: 200px; */
+  /* background: black; */
+  /* z-index: 12; */
+  /* margin-top: 10px; */
+
+  /* z-index: -1; */
 }
