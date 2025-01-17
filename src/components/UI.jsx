@@ -40,7 +40,7 @@ export const UI = ({ hidden, ...props }) => {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 bottom-0 z-10  flex justify-between p-4 flex-col pointer-events-none ">
-        <div className="w-full flex h-[70px] fixed p-2 top-0 left-0 bg-[#000000ba]">
+        <div className="w-full flex h-[70px] fixed p-2 top-0 left-0 ">
           <div className="bgimage h-full w-full ml-3"></div>
         </div>
         {/* <div className="pointer-events-auto"> </div> */}

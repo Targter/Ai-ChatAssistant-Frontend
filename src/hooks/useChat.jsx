@@ -30,7 +30,7 @@ export const ChatProvider = ({ children }) => {
       //
       setLoading(true);
       const response = await fetch(
-        `https://ttserver-psi.vercel.app/stream/${encodeURIComponent(text)}`,
+        `https://ttserver-2nd.vercel.app/stream/${encodeURIComponent(text)}`,
         {
           method: "GET",
         }
